@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Validação de Atendimentos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .status {
+            margin-left: 8px;
+            font-weight: bold;
+        }
+        .status.v {
+            color: #10b981;
+        }
+        .status.x {
+            color: #ef4444;
+        }
+        .copied {
+            background-color: #d1fae5;
+            transition: background-color 0.3s;
+        }
+        .tab-container {
+            display: flex;
+            border-bottom: 1px solid #e5e7eb;
+            margin-bottom: 1.5rem;
+        }
+        .tab {
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            background-color: #f3f4f6;
+            border: 1px solid #e5e7eb;
+            border-bottom: none;
+            border-top-left-radius: 0.5rem;
+            border-top-right-radius: 0.5rem;
+            margin-right: 0.5rem;
+        }
+        .tab.active {
+            background-color: #ffffff;
+            border-bottom: 1px solid #ffffff;
+            font-weight: bold;
+        }
+        .tab-content {
+            display: none;
+            padding: 1.5rem;
+            background-color: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+        }
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 min-h-screen flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl shadow-lg p-6 w-full max-w-lg">
+        <div class="tab-container">
+            <div class="tab active" onclick="openTab('tabAtendimento')">Validação de Atendimento</div>
+        </div>
+        <!-- Tab Validação de Atendimento -->
+        <div id="tabAtendimento" class="tab-content active">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">Validação de Atendimento</h2>
+            <form id="validacaoForm" class="space-y-4">
+                <div class="form-group">
+                    <label for="digicontrol" class="block text-sm font-medium text-gray-700">Digicontrol</label>
+                    <textarea
+                        id="digicontrol"
+                        name="digicontrol"
+                        class="mt-1 w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        rows="4"
+                        placeholder="Digite os detalhes do Digicontrol..."
+                        oninput="updateStatus(this)"
+                    ></textarea>
+                    <span class="status x">X</span>
+                </div>
+                <div class="form-group">
+                    <label for="servico_realizado" class="block text-sm font-medium text-gray-700">Serviço Realizado</label>
+                    <textarea
+                        id="servico_realizado"
+                        name="servico_realizado"
+                        class="mt-1 w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        rows="4"
+                        placeholder="Ordem de Serviço: &#10;Técnico Responsável: &#10;Função Executada: &#10;Data da Execução:"
+                        oninput="updateStatus(this)"
+                    ></textarea>
+                    <span class="status x">X</span>
+                </div>
+                <div class="form-group">
+                    <label for="descricao_os" class="block text-sm font-medium text-gray-700">Descrição da OS</label>
+                    <textarea
+                        id="descricao_os"
+                        name="descricao_os"
+                        class="mt-1 w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        rows="4"
+                        placeholder="Descreva a Ordem de Serviço..."
+                        oninput="updateStatus(this)"
+                    ></textarea>
+                    <span class="status x">X</span>
+                </div>
+                <div class="form-group">
+                    <label for="acesso" class="block text-sm font-medium text-gray-700">Acesso</label>
+                    <input
+                        type="text"
+                        id="acesso"
+                        name="acesso"
+                        value="multipro"
+                        class="mt-1 w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        oninput="updateStatus(this)"
+                    >
+                    <span class="status x">X</span>
+                </div>
+                <div class="form-group">
+                    <label for="senha" class="block text-sm font-medium text-gray-700">Senha de Acesso</label>
+                    <div class="relative">
+                        <input
+                            type="password"
+                            id="senha"
+                            name="senha"
+                            value="@1D_"
+                            class="mt-1 w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            oninput="updateStatus(this); this.value = this.value.replace(/\s/g, '')"
+                        >
+                        <button
+                            type="button"
+                            onclick="togglePasswordVisibility()"
+                            class="absolute inset-y-0 right-2 flex items-center text-gray-500 hover:text-gray-700"
+                        >
+                            👁️
+                        </button>
+                    </div>
+                    <span class="status x">X</span>
+                </div>
+                <div class="form-group">
+                    <label for="sinal_onu" class="block text-sm font-medium text-gray-700">Sinal da ONU</label>
+                    <input
+                        type="text"
+                        id="sinal_onu"
+                        name="sinal_onu"
+                        class="mt-1 w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        oninput="updateStatus(this)"
+                    >
+                    <span class="status x">X</span>
+                </div>
+                <div class="form-group">
+                    <label for="statusServico" class="block text-sm font-medium text-gray-700">Status do Serviço</label>
+                    <select
+                        id="statusServico"
+                        name="statusServico"
+                        class="mt-1 w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        onchange="toggleErroField('validacaoForm')"
+                    >
+                        <option value="sem_erro">Sem Erros</option>
+                        <option value="com_erro">Com Erro</option>
+                    </select>
+                </div>
+                <div id="erroContainer" class="form-group hidden">
+                    <label for="erro" class="block text-sm font-medium text-gray-700">Erro Encontrado</label>
+                    <input
+                        type="text"
+                        id="erro"
+                        name="erro"
+                        class="mt-1 w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        oninput="updateStatus(this)"
+                    >
+                    <span class="status x">X</span>
+                </div>
+                <div class="flex justify-end space-x-2">
+                    <button
+                        type="button"
+                        onclick="copiarDados('validacaoForm')"
+                        class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition"
+                    >
+                        Copiar Dados
+                    </button>
+                    <button
+                        type="button"
+                        onclick="limparCampos('validacaoForm')"
+                        class="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition"
+                    >
+                        Limpar Campos
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let originalValues = {
+            validacaoForm: {}
+        };
+
+        // Salva os valores originais dos campos
+        function saveOriginalValues(formId) {
+            const form = document.getElementById(formId);
+            const inputs = form.querySelectorAll('input, select, textarea');
+            originalValues[formId] = {};
+            inputs.forEach(input => {
+                originalValues[formId][input.name] = input.value;
+            });
+        }
+
+        // Função para limpar os campos
+        function limparCampos(formId) {
+            const form = document.getElementById(formId);
+            const inputs = form.querySelectorAll('input, select, textarea');
+            inputs.forEach(input => {
+                input.value = originalValues[formId][input.name] !== undefined ? originalValues[formId][input.name] : '';
+                updateStatus(input);
+            });
+            const statusServico = document.getElementById('statusServico');
+            const erroContainer = document.getElementById('erroContainer');
+            statusServico.value = 'sem_erro';
+            erroContainer.classList.add('hidden');
+        }
+
+        // Função para tornar a senha visível
+        function togglePasswordVisibility() {
+            const senhaInput = document.getElementById('senha');
+            senhaInput.type = senhaInput.type === 'password' ? 'text' : 'password';
+        }
+
+        // Função para abrir abas
+        function openTab(tabId) {
+            const tabs = document.querySelectorAll('.tab-content');
+            const tabLinks = document.querySelectorAll('.tab');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            tabLinks.forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            document.querySelector(`.tab[onclick="openTab('${tabId}')"]`).classList.add('active');
+        }
+
+        // Função para copiar dados
+        function copiarDados(formId) {
+            const form = document.getElementById(formId);
+            let dadosParaCopiar = '';
+
+            const digicontrol = (form.digicontrol.value || '').trim();
+            const servicoRealizado = (form.servico_realizado.value || '').trim();
+            const descricao_os = (form.descricao_os.value || '').trim();
+            const acesso = (form.acesso.value || '').trim();
+            const senha = (form.senha.value || '').trim();
+            const sinalOnu = (form.sinal_onu.value || '').trim();
+            const statusServico = form.statusServico.value;
+            const erro = (form.erro ? (form.erro.value || '').trim() : '');
+
+            dadosParaCopiar += `Digicontrol: ${digicontrol}\n`;
+            dadosParaCopiar += `Serviço Realizado: ${servicoRealizado}\n`;
+            dadosParaCopiar += `Descrição da OS: ${descricao_os}\n`;
+            dadosParaCopiar += `Acesso: ${acesso}\n`;
+            dadosParaCopiar += `Senha de Acesso: ${senha}\n`;
+            dadosParaCopiar += `Sinal da ONU: ${sinalOnu}\n`;
+            dadosParaCopiar += `Status do Serviço: ${statusServico === 'sem_erro' ? 'Sem Erros' : 'Com Erro'}\n`;
+            dadosParaCopiar += `${statusServico === 'sem_erro' ? 'Validado por Arnaldo' : 'Invalidado por Arnaldo'}\n`;
+            if (statusServico === 'com_erro') {
+                dadosParaCopiar += `Erro Encontrado: ${erro}\n`;
+            }
+
+            navigator.clipboard.writeText(dadosParaCopiar).then(() => {
+                const button = form.querySelector('button[onclick="copiarDados(\'' + formId + '\')"]');
+                button.classList.add('copied');
+                button.textContent = 'Copiado!';
+                setTimeout(() => {
+                    button.classList.remove('copied');
+                    button.textContent = 'Copiar Dados';
+                }, 1000);
+            }).catch(err => console.error('Erro ao copiar os dados: ', err));
+        }
+
+        // Função para atualizar status
+        function updateStatus(input) {
+            const statusElement = input.nextElementSibling;
+            if (statusElement) {
+                if (input.value.trim() === '') {
+                    statusElement.textContent = 'X';
+                    statusElement.classList.remove('v');
+                    statusElement.classList.add('x');
+                } else {
+                    statusElement.textContent = 'V';
+                    statusElement.classList.remove('x');
+                    statusElement.classList.add('v');
+                }
+            }
+        }
+
+        // Função para mostrar/esconder campo de erro
+        function toggleErroField(formId) {
+            const form = document.getElementById(formId);
+            const statusServico = document.getElementById('statusServico');
+            const erroContainer = document.getElementById('erroContainer');
+            erroContainer.classList.toggle('hidden', statusServico.value !== 'com_erro');
+            if (statusServico.value === 'com_erro') {
+                const erroInput = document.getElementById('erro');
+                updateStatus(erroInput);
+            }
+        }
+
+        // Inicializa status e valores
+        window.onload = function() {
+            saveOriginalValues('validacaoForm');
+            const inputs = document.querySelectorAll('#validacaoForm input, #validacaoForm select, #validacaoForm textarea');
+            inputs.forEach(input => {
+                updateStatus(input);
+            });
+            openTab('tabAtendimento');
+        };
+    </script>
+</body>
+</html>
