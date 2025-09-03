@@ -250,7 +250,7 @@
             dadosParaCopiar += `Senha de Acesso: ${senha}\n`;
             dadosParaCopiar += `Sinal da ONU: ${sinalOnu}\n`;
             dadosParaCopiar += `Status do Serviço: ${statusServico === 'sem_erro' ? 'Sem Erros' : 'Com Erro'}\n`;
-            dadosParaCopiar += `${statusServico === 'sem_erro' ? 'Validado por Arnaldo' : 'Invalidado por Arnaldo'}\n`;
+            dadosParaCopiar += `${statusServico === 'sem_erro' ? 'Validado por ' : 'Invalidado por '}\n`;
             if (statusServico === 'com_erro') {
                 dadosParaCopiar += `Erro Encontrado: ${erro}\n`;
             }
@@ -305,4 +305,5 @@
         };
     </script>
 </body>
+
 </html>
